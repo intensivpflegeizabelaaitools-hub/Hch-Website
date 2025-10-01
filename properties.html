@@ -22,27 +22,27 @@
   </header>
 
   <main class="container">
-    <h1 data-i18n="properties">Miet/Verkauf</h1>
-    <p class="lead">Entdecken Sie unsere aktuellen Angebote.</p>
+  <h1 data-i18n="properties">Miet/Verkauf</h1>
+  <p class="lead" data-i18n="hero_lead">Entdecken Sie unsere aktuellen Angebote.</p>
 
     <section class="filters" aria-label="Filters">
       <div class="filters">
-        <label>Location<select id="filter-loc"><option value="">Any</option></select></label>
-        <label>Type<select id="filter-type"><option value="">Any</option></select></label>
-        <label>Min rooms<input id="filter-rooms" type="number" min="0" placeholder="0"></label>
-        <label>Min price<input id="filter-min" type="number" min="0" placeholder="0"></label>
-        <label>Max price<input id="filter-max" type="number" min="0" placeholder="9999999"></label>
-        <label>Status<select id="filter-status"><option value="">Any</option><option value="available">available</option><option value="reserved">reserved</option><option value="sold">sold</option></select></label>
+        <label data-i18n="filters_location">Location<select id="filter-loc"><option value="">Any</option></select></label>
+        <label data-i18n="filters_type">Type<select id="filter-type"><option value="">Any</option></select></label>
+        <label data-i18n="filters_rooms">Min rooms<input id="filter-rooms" type="number" min="0" placeholder="0"></label>
+        <label data-i18n="filters_min">Min price<input id="filter-min" type="number" min="0" placeholder="0"></label>
+        <label data-i18n="filters_max">Max price<input id="filter-max" type="number" min="0" placeholder="9999999"></label>
+        <label data-i18n="filters_status">Status<select id="filter-status"><option value="">Any</option><option value="available">available</option><option value="reserved">reserved</option><option value="sold">sold</option></select></label>
       </div>
     </section>
 
     <div style="display:flex;justify-content:space-between;align-items:center;margin:12px 0">
       <div id="results-count">0 listings</div>
-      <div><button id="sort-price" class="more-btn">Sort: price ↑</button></div>
+      <div><button id="sort-price" class="more-btn" data-i18n="sort_price">Sort: price ↑</button></div>
     </div>
 
     <section id="results" class="properties-grid grid" aria-live="polite"></section>
-    <div style="text-align:center;margin:18px 0"><button id="load-more" class="more-btn">Pokaż więcej</button></div>
+  <div style="text-align:center;margin:18px 0"><button id="load-more" class="more-btn" data-i18n="load_more">Pokaż więcej</button></div>
   </main>
 
   <footer>
@@ -94,7 +94,7 @@
 
       function renderList(list){
         results.innerHTML='';
-        count.textContent = `${list.length} listings`;
+        count.textContent = App.t('results_count',{count:list.length});
         const toShow = list.slice(0,limit);
         toShow.forEach(p=>{
           const card = document.createElement('a'); card.href = `property.html?id=${p.id}`; card.className='card prop-card';
@@ -104,6 +104,8 @@
         // lazy load reveal
         App.qsa('.prop-card').forEach(el=>el.classList.add('reveal-on-scroll'));
         if(list.length<=limit) loadMore.style.display='none'; else loadMore.style.display='inline-block';
+        // ensure load more label translated
+        loadMore.textContent = App.t('load_more');
       }
 
       // debounce inputs

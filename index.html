@@ -30,10 +30,10 @@
         <a data-i18n="services" href="#services">Unsere Leistungen</a>
         <a data-i18n="tours" href="#tours">Touren</a>
         <a data-i18n="contact" href="#contact">Kontakt</a>
-        <div class="lang-switch" style="margin-left:12px">
-          <button class="lang-chip" data-lang="pl">PL</button>
-          <button class="lang-chip active" data-lang="de">DE</button>
-          <button class="lang-chip" data-lang="en">EN</button>
+        <div class="lang-switch" style="margin-left:12px" role="tablist" aria-label="Language switch">
+          <button class="lang-chip" data-lang="pl" role="tab" aria-pressed="false">PL</button>
+          <button class="lang-chip active" data-lang="de" role="tab" aria-pressed="true">DE</button>
+          <button class="lang-chip" data-lang="en" role="tab" aria-pressed="false">EN</button>
         </div>
       </nav>
     </div>
@@ -47,18 +47,18 @@
     </section>
 
     <section id="services" class="reveal-on-scroll">
-      <h2>Zakres naszych usług</h2>
+      <h2 data-i18n="services_heading">Zakres naszych usług</h2>
       <div class="grid" style="grid-template-columns:repeat(3,1fr);gap:16px;margin-top:12px">
-        <div class="card" style="padding:16px">Preselekcja nieruchomości</div>
-        <div class="card" style="padding:16px">Wirtualne wycieczki / video-tury</div>
-        <div class="card" style="padding:16px">Wsparcie prawne & notarialne</div>
-        <div class="card" style="padding:16px">Odbiór kluczy & przekazanie</div>
-        <div class="card" style="padding:16px">Zarządzanie najmem</div>
+        <div class="card" style="padding:16px" data-i18n="service_sel">Preselekcja nieruchomości</div>
+        <div class="card" style="padding:16px" data-i18n="service_tour">Wirtualne wycieczki / video-tury</div>
+        <div class="card" style="padding:16px" data-i18n="service_legal">Wsparcie prawne & notarialne</div>
+        <div class="card" style="padding:16px" data-i18n="service_keys">Odbiór kluczy & przekazanie</div>
+        <div class="card" style="padding:16px" data-i18n="service_mgmt">Zarządzanie najmem</div>
       </div>
     </section>
 
     <section id="tours" class="reveal-on-scroll" style="margin-top:28px">
-      <h2 data-i18n="tours">Wycieczki</h2>
+      <h2 data-i18n="tours_heading">Wycieczki</h2>
       <div class="grid" style="grid-template-columns:repeat(3,1fr);gap:16px;margin-top:12px">
         <div class="card" style="padding:12px">Tour 1 – Marina & promenada</div>
         <div class="card" style="padding:12px">Tour 2 – Luksusowe osiedla</div>
@@ -67,7 +67,7 @@
     </section>
 
     <section id="contact" style="margin-top:28px">
-      <h2 data-i18n="contact">Kontakt</h2>
+      <h2 data-i18n="contact_heading">Kontakt</h2>
       <div style="display:grid;grid-template-columns:repeat(3,1fr);gap:12px;margin-top:12px">
         <!-- contact cards will be rendered by app.js using window.CONTACTS if present, but provide fallback -->
         <div class="card" style="padding:12px">

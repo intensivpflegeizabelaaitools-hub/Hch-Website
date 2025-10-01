@@ -21,7 +21,7 @@
       <a href="index.html" data-i18n="home">Startseite</a> &raquo; <a href="properties.html" data-i18n="properties">Miet/Verkauf</a> &raquo; <span id="crumb-title"></span>
     </nav>
 
-    <div id="not-found" style="display:none">Brak oferty. <a href="properties.html">Zurück zur Liste</a></div>
+  <div id="not-found" style="display:none"><span data-i18n="not_found">Brak oferty. Zurück zur Liste</span> <a href="properties.html">properties</a></div>
 
     <div id="detail" class="detail-grid" style="display:none">
       <div>
@@ -36,7 +36,7 @@
         </section>
 
         <section style="margin-top:18px">
-          <h4>Mapa</h4>
+          <h4 data-i18n="map">Mapa</h4>
           <div id="map" style="height:300px;background:#eee;border-radius:12px;overflow:hidden"></div>
         </section>
       </div>
@@ -54,7 +54,7 @@
     </div>
 
     <section style="margin-top:24px">
-      <h4>Podobne oferty</h4>
+      <h4 data-i18n="similar">Podobne oferty</h4>
       <div id="similar" class="grid" style="grid-template-columns:repeat(3,1fr);gap:12px;margin-top:12px"></div>
     </section>
 
@@ -73,9 +73,16 @@
       document.getElementById('prop-desc').textContent = prop.description;
       document.getElementById('prop-price').textContent = App.fmtEUR(prop.priceEUR,App.getLang());
       document.getElementById('specs').innerHTML = `<div>📍 ${prop.location}</div><div>Type: ${prop.type}</div><div>🛏 ${prop.rooms}</div><div>📐 ${prop.size} m²</div><div style='margin-top:8px'>Status: <span class='badge ${prop.status}'>${prop.status}</span></div>`;
-      // gallery
-      const gm = document.getElementById('gallery-main'); gm.innerHTML = `<img src='${prop.gallery[0]}' alt='${prop.title}' style='width:100%;height:100%;object-fit:cover'>`;
-      const thumbs = document.getElementById('thumbs'); prop.gallery.forEach((g,i)=>{const im=document.createElement('img');im.src=g;im.alt=prop.title + ' ' + (i+1);im.loading='lazy';im.addEventListener('click',()=>{gm.innerHTML=`<img src='${g}' alt='${prop.title}'>`});thumbs.appendChild(im)});
+      // gallery + lightbox wiring
+      const gm = document.getElementById('gallery-main'); gm.innerHTML = `<button class="focus-ring" aria-label="Open gallery" style="all:unset;display:block;width:100%;height:100%"><img src='${prop.gallery[0]}' alt='${prop.title}' style='width:100%;height:100%;object-fit:cover'></button>`;
+      const thumbs = document.getElementById('thumbs'); prop.gallery.forEach((g,i)=>{
+        const im=document.createElement('img');im.src=g;im.alt=prop.title + ' ' + (i+1);im.loading='lazy';im.tabIndex=0;im.classList.add('focus-ring');
+        im.addEventListener('click',()=>{App.openLightbox(prop.gallery,i)});
+        im.addEventListener('keydown',(e)=>{if(e.key==='Enter' || e.key===' ') App.openLightbox(prop.gallery,i)});
+        thumbs.appendChild(im);
+      });
+      // open LB when clicking main
+      gm.querySelector('button').addEventListener('click',()=>App.openLightbox(prop.gallery,0));
       // WA button
       const wa = document.getElementById('wa-btn'); wa.href = `https://wa.me/${App.phoneToDigits(window.CONTACTS[0].phone)}?text=${encodeURIComponent(prop.title)}`;
       // disable CTA if sold
@@ -89,12 +96,12 @@
       map.innerHTML = `<iframe width='100%' height='100%' frameborder='0' referrerpolicy='no-referrer-when-downgrade' src='https://www.google.com/maps?q=${encodeURIComponent(c)}&output=embed'></iframe>`;
 
       // similar
-      const similar = window.PROPERTIES.filter(p=>p.id!==prop.id && (p.location===prop.location || p.type===prop.type)).slice(0,3);
+  const similar = window.PROPERTIES.filter(p=>p.id!==prop.id && (p.location===prop.location || p.type===prop.type)).slice(0,3);
       const simWrap = document.getElementById('similar'); similar.forEach(p=>{const a=document.createElement('a');a.href=`property.html?id=${p.id}`;a.className='card';a.style.padding='12px';a.innerHTML=`<img src='${p.image}' alt='${p.title}' style='aspect-ratio:16/10;object-fit:cover'><div style='padding:8px'><div style='font-weight:700'>${p.title}</div><div style='color:var(--muted)'>${p.location}</div><div style='color:var(--gold)'>${App.fmtEUR(p.priceEUR,App.getLang())}</div></div>`;simWrap.appendChild(a)});
 
       // JSON-LD breadcrumbs
       const ld = {"@context":"https://schema.org","@type":"BreadcrumbList","itemListElement":[{"@type":"ListItem","position":1,"name":"Home","item":"index.html"},{"@type":"ListItem","position":2,"name":"Properties","item":"properties.html"},{"@type":"ListItem","position":3,"name":prop.title}]};
-      const s = document.createElement('script'); s.type='application/ld+json'; s.textContent = JSON.stringify(ld); document.head.appendChild(s);
+  const s = document.createElement('script'); s.type='application/ld+json'; s.textContent = JSON.stringify(ld); document.head.appendChild(s);
       // JSON-LD Offer / RealEstateListing
       const availabilityMap = { available: 'https://schema.org/InStock', reserved: 'https://schema.org/PreOrder', sold: 'https://schema.org/SoldOut' };
       const offerLd = {
