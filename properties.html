@@ -1,0 +1,134 @@
+<!doctype html>
+<html lang="de">
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width,initial-scale=1">
+  <title>Home Creators Hurghada – Angebote</title>
+  <meta name="description" content="Liste dostępnych nieruchomości Home Creators Hurghada">
+  <link rel="stylesheet" href="styles.css">
+  <link rel="icon" href="img/logo.png">
+</head>
+<body>
+  <header class="site-header">
+    <div class="container" style="display:flex;justify-content:space-between;align-items:center">
+      <div class="site-brand">
+        <a href="index.html"><img src="img/logo.png" alt="logo"></a>
+      </div>
+      <nav class="site-nav">
+        <a data-i18n="home" href="index.html">Startseite</a>
+        <a data-i18n="properties" href="properties.html">Miet/Verkauf</a>
+      </nav>
+    </div>
+  </header>
+
+  <main class="container">
+    <h1 data-i18n="properties">Miet/Verkauf</h1>
+    <p class="lead">Entdecken Sie unsere aktuellen Angebote.</p>
+
+    <section class="filters" aria-label="Filters">
+      <div class="filters">
+        <label>Location<select id="filter-loc"><option value="">Any</option></select></label>
+        <label>Type<select id="filter-type"><option value="">Any</option></select></label>
+        <label>Min rooms<input id="filter-rooms" type="number" min="0" placeholder="0"></label>
+        <label>Min price<input id="filter-min" type="number" min="0" placeholder="0"></label>
+        <label>Max price<input id="filter-max" type="number" min="0" placeholder="9999999"></label>
+        <label>Status<select id="filter-status"><option value="">Any</option><option value="available">available</option><option value="reserved">reserved</option><option value="sold">sold</option></select></label>
+      </div>
+    </section>
+
+    <div style="display:flex;justify-content:space-between;align-items:center;margin:12px 0">
+      <div id="results-count">0 listings</div>
+      <div><button id="sort-price" class="more-btn">Sort: price ↑</button></div>
+    </div>
+
+    <section id="results" class="properties-grid grid" aria-live="polite"></section>
+    <div style="text-align:center;margin:18px 0"><button id="load-more" class="more-btn">Pokaż więcej</button></div>
+  </main>
+
+  <footer>
+    <div class="container">© Home Creators Hurghada</div>
+  </footer>
+
+  <script src="properties.js" defer></script>
+  <script src="app.js" defer></script>
+  <script defer>
+    // properties list logic
+    document.addEventListener('DOMContentLoaded',()=>{
+      const results = document.getElementById('results');
+      const count = document.getElementById('results-count');
+      const loadMore = document.getElementById('load-more');
+      const perPageStart = 9; let limit = perPageStart;
+      const q = App.parseQuery();
+      // populate filters
+      const locs = Array.from(new Set(window.PROPERTIES.map(p=>p.location)));
+      const types = Array.from(new Set(window.PROPERTIES.map(p=>p.type)));
+      const selLoc = document.getElementById('filter-loc'); locs.forEach(l=>{const o=document.createElement('option');o.value=l;o.textContent=l;selLoc.appendChild(o)});
+      const selType = document.getElementById('filter-type'); types.forEach(t=>{const o=document.createElement('option');o.value=t;o.textContent=t;selType.appendChild(o)});
+
+      // inputs
+      const inputs = ['filter-loc','filter-type','filter-rooms','filter-min','filter-max','filter-status'].map(id=>document.getElementById(id));
+      function readFilters(){return {
+        loc: selLoc.value,
+        type: selType.value,
+        rooms: Number(document.getElementById('filter-rooms').value)||0,
+        min: Number(document.getElementById('filter-min').value)||0,
+        max: Number(document.getElementById('filter-max').value)||Infinity,
+        status: document.getElementById('filter-status').value
+      }}
+
+      function applyFilters(){
+        const f = readFilters();
+        // store in query
+        App.updateQuery({loc:f.loc,type:f.type,rooms:f.rooms||'',min:f.min||'',max:isFinite(f.max)?f.max:'',status:f.status||'',sort:'priceAsc'});
+        let list = window.PROPERTIES.slice();
+        if(f.loc) list = list.filter(p=>p.location===f.loc);
+        if(f.type) list = list.filter(p=>p.type===f.type);
+        if(f.rooms) list = list.filter(p=>p.rooms>=f.rooms);
+        if(isFinite(f.min) && f.min>0) list = list.filter(p=>p.priceEUR>=f.min);
+        if(isFinite(f.max)) list = list.filter(p=>p.priceEUR<=f.max);
+        if(f.status) list = list.filter(p=>p.status===f.status);
+        // sort price ascending
+        list.sort((a,b)=>a.priceEUR-b.priceEUR);
+        renderList(list);
+      }
+
+      function renderList(list){
+        results.innerHTML='';
+        count.textContent = `${list.length} listings`;
+        const toShow = list.slice(0,limit);
+        toShow.forEach(p=>{
+          const card = document.createElement('a'); card.href = `property.html?id=${p.id}`; card.className='card prop-card';
+          card.innerHTML = `<div class='prop-media'><img loading='lazy' src='${p.image}' alt='${p.title}' style='aspect-ratio:16/10;object-fit:cover'></div><div class='prop-body'><div class='badge ${p.status}'>${p.status}</div><div class='prop-title'>${p.title}</div><div class='prop-meta'>📍 ${p.location} · 📐 ${p.size}m² · 🛏 ${p.rooms}</div><div class='prop-price'>${App.fmtEUR(p.priceEUR,App.getLang())}</div></div>`;
+          results.appendChild(card);
+        });
+        // lazy load reveal
+        App.qsa('.prop-card').forEach(el=>el.classList.add('reveal-on-scroll'));
+        if(list.length<=limit) loadMore.style.display='none'; else loadMore.style.display='inline-block';
+      }
+
+      // debounce inputs
+      const deb = App.debounce(()=>applyFilters(),250);
+      inputs.forEach(i=>i.addEventListener('input',deb));
+
+      loadMore.addEventListener('click',()=>{limit+=9;applyFilters();});
+
+      // initialize from query
+      (function initFromQuery(){
+        const q = App.parseQuery();
+        if(q.loc) selLoc.value=q.loc;
+        if(q.type) selType.value=q.type;
+        if(q.rooms) document.getElementById('filter-rooms').value=q.rooms;
+        if(q.min) document.getElementById('filter-min').value=q.min;
+        if(q.max) document.getElementById('filter-max').value=q.max;
+        if(q.status) document.getElementById('filter-status').value=q.status;
+        // initial limit
+        if(q.limit) limit=Number(q.limit);
+      })();
+
+      // initial render
+      applyFilters();
+    });
+  </script>
+</body>
+</html>
+

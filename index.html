@@ -1,0 +1,121 @@
+<!doctype html>
+<html lang="de">
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width,initial-scale=1">
+  <title>Home Creators Hurghada – Startseite</title>
+  <meta name="description" content="Home Creators Hurghada – Immobilien in Hurghada, El Gouna und Sahl Hasheesh.">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;600;700&family=Playfair+Display:wght@400;700&display=swap" rel="stylesheet">
+  <link rel="stylesheet" href="styles.css">
+  <meta property="og:title" content="Home Creators Hurghada">
+  <meta property="og:description" content="Exklusive Immobilien in Hurghada & El Gouna.">
+  <link rel="icon" href="img/logo.png">
+  <!-- GA4 ID placeholder -->
+  <!-- FB Pixel placeholder -->
+</head>
+<body>
+  <header class="site-header">
+    <div class="container" style="display:flex;justify-content:space-between;align-items:center">
+      <div class="site-brand">
+        <a href="index.html"><img src="img/logo.png" alt="Home Creators Hurghada logo"></a>
+        <div>
+          <div style="font-weight:700">Home Creators Hurghada</div>
+          <div style="font-size:13px;color:var(--muted)">Real Estate & Services</div>
+        </div>
+      </div>
+      <nav class="site-nav" aria-label="Main navigation">
+        <a data-i18n="home" href="index.html">Startseite</a>
+        <a data-i18n="properties" href="properties.html">Miet/Verkauf</a>
+        <a data-i18n="services" href="#services">Unsere Leistungen</a>
+        <a data-i18n="tours" href="#tours">Touren</a>
+        <a data-i18n="contact" href="#contact">Kontakt</a>
+        <div class="lang-switch" style="margin-left:12px">
+          <button class="lang-chip" data-lang="pl">PL</button>
+          <button class="lang-chip active" data-lang="de">DE</button>
+          <button class="lang-chip" data-lang="en">EN</button>
+        </div>
+      </nav>
+    </div>
+  </header>
+
+  <main class="container">
+    <section class="hero reveal-on-scroll">
+      <h1 data-i18n="hero_title">Home Creators Hurghada — Ihr Partner in Hurghada</h1>
+      <p class="lead" data-i18n="hero_lead">Exklusive Immobilien & persönliche Betreuung vor Ort.</p>
+      <a class="cta" data-i18n="view_list" href="properties.html">Angebote ansehen</a>
+    </section>
+
+    <section id="services" class="reveal-on-scroll">
+      <h2>Zakres naszych usług</h2>
+      <div class="grid" style="grid-template-columns:repeat(3,1fr);gap:16px;margin-top:12px">
+        <div class="card" style="padding:16px">Preselekcja nieruchomości</div>
+        <div class="card" style="padding:16px">Wirtualne wycieczki / video-tury</div>
+        <div class="card" style="padding:16px">Wsparcie prawne & notarialne</div>
+        <div class="card" style="padding:16px">Odbiór kluczy & przekazanie</div>
+        <div class="card" style="padding:16px">Zarządzanie najmem</div>
+      </div>
+    </section>
+
+    <section id="tours" class="reveal-on-scroll" style="margin-top:28px">
+      <h2 data-i18n="tours">Wycieczki</h2>
+      <div class="grid" style="grid-template-columns:repeat(3,1fr);gap:16px;margin-top:12px">
+        <div class="card" style="padding:12px">Tour 1 – Marina & promenada</div>
+        <div class="card" style="padding:12px">Tour 2 – Luksusowe osiedla</div>
+        <div class="card" style="padding:12px">Tour 3 – Invest & legal</div>
+      </div>
+    </section>
+
+    <section id="contact" style="margin-top:28px">
+      <h2 data-i18n="contact">Kontakt</h2>
+      <div style="display:grid;grid-template-columns:repeat(3,1fr);gap:12px;margin-top:12px">
+        <!-- contact cards will be rendered by app.js using window.CONTACTS if present, but provide fallback -->
+        <div class="card" style="padding:12px">
+          <strong>Barbara Hauser</strong><br>
+          <a href="mailto:home@hchurghada.com">home@hchurghada.com</a><br>
+          <a href="tel:+201503305778">+20 150 330 5778</a>
+        </div>
+        <div class="card" style="padding:12px">
+          <strong>Tatiana Tokarczyk</strong><br>
+          <a href="mailto:home@hchurghada.com">home@hchurghada.com</a><br>
+          <a href="tel:+48530425550">+48 530 425 550</a>
+        </div>
+        <div class="card" style="padding:12px">
+          <strong>Katarzyna Wieczorek</strong><br>
+          <a href="mailto:home@hchurghada.com">home@hchurghada.com</a><br>
+          <a href="tel:+48508479121">+48 508 479 121</a>
+        </div>
+      </div>
+    </section>
+
+  </main>
+
+  <footer>
+    <div class="container" style="display:flex;justify-content:space-between;align-items:center">
+      <div>© Home Creators Hurghada</div>
+      <div style="color:var(--muted)"><a href="#">Impressum</a> · <a href="#">Privacy</a></div>
+    </div>
+  </footer>
+
+  <script src="properties.js" defer></script>
+  <script src="app.js" defer></script>
+  <script defer>
+    // Simple enhancement: render contacts from window.CONTACTS into contact section
+    document.addEventListener('DOMContentLoaded',()=>{
+      if(window.CONTACTS){
+        const container = document.querySelector('#contact');
+        const grid = document.createElement('div'); grid.style.display='grid'; grid.style.gridTemplateColumns='repeat(3,1fr)'; grid.style.gap='12px'; grid.style.marginTop='12px';
+        window.CONTACTS.forEach(c=>{
+          const card = document.createElement('div'); card.className='card'; card.style.padding='12px';
+          card.innerHTML = `<strong>${c.name}</strong><br><a href='mailto:${c.email}'>${c.email}</a><br><a href='tel:${c.phone}'>${c.phone}</a><div style="margin-top:8px">${c.languages.map(l=>`<span class='lang-chip' style='display:inline-block;margin-right:6px'>${l}</span>`).join('')}</div><div style='margin-top:8px'><a class='btn wa' href='https://wa.me/${c.phone.replace(/[^0-9]/g,'')}' aria-label='WhatsApp ${c.name}'>WhatsApp</a></div>`;
+          grid.appendChild(card);
+        });
+        // replace fallback
+        container.querySelectorAll('.card').forEach(n=>n.remove());
+        container.appendChild(grid);
+      }
+    });
+  </script>
+
+</body>
+</html>

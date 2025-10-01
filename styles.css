@@ -1,0 +1,91 @@
+/* styles.css - Design tokens, layout, components for Home Creators Hurghada */
+:root{
+  --emerald:#046A5E;
+  --gold:#C9A646;
+  --soft:#E7F2EF;
+  --line:#E6E8EA;
+  --text:#1E2A2A;
+  --muted:#6E7C7C;
+  --radius:16px;
+  --shadow:0 8px 24px rgba(0,0,0,.08);
+  --maxw:1280px;
+  --gap:20px;
+}
+
+/* Reset & base */
+*{box-sizing:border-box}
+html,body{height:100%}
+body{font-family:Inter,system-ui,Segoe UI,Roboto,Helvetica,Arial,sans-serif;color:var(--text);margin:0;background:#fff;line-height:1.4}
+a{color:inherit;text-decoration:none}
+img{max-width:100%;display:block}
+
+/* Utilities */
+.container{max-width:var(--maxw);margin:0 auto;padding:24px}
+.grid{display:grid;gap:var(--gap)}
+
+/* Header */
+header.site-header{position:sticky;top:0;background:#fff;z-index:40;transition:box-shadow .2s ease;padding:12px 0}
+header.site-header.scrolled{box-shadow:var(--shadow)}
+.site-brand{display:flex;align-items:center;gap:12px}
+.site-brand img{width:56px;height:56px;border-radius:8px;object-fit:cover}
+.site-nav{display:flex;gap:16px;align-items:center}
+.lang-switch{display:flex;gap:8px}
+.lang-chip{padding:6px 10px;border-radius:999px;border:1px solid var(--line);cursor:pointer;background:#fff}
+.lang-chip.active{background:var(--emerald);color:#fff}
+
+/* Hero */
+.hero{border-radius:var(--radius);padding:48px;background:linear-gradient(180deg,var(--soft),#fff);margin:20px 0}
+.hero h1{font-family:'Playfair Display',serif;font-size:40px;margin:0 0 12px}
+.hero p.lead{font-size:18px;color:var(--muted);margin:0 0 18px}
+.cta{background:var(--emerald);color:#fff;padding:12px 18px;border-radius:12px;display:inline-block}
+
+/* Cards */
+.card{background:#fff;border-radius:var(--radius);box-shadow:var(--shadow);overflow:hidden}
+.card:hover{transform:translateY(-6px)}
+.card img{width:100%;height:auto;display:block}
+
+/* Properties grid */
+.properties-grid{grid-template-columns:repeat(3,1fr)}
+@media (max-width:900px){.properties-grid{grid-template-columns:repeat(2,1fr)}}
+@media (max-width:600px){.properties-grid{grid-template-columns:1fr}}
+
+.prop-card{display:flex;flex-direction:column;gap:12px}
+.prop-media{position:relative}
+.badge{position:absolute;left:12px;top:12px;padding:8px 12px;border-radius:999px;color:#fff;font-weight:600}
+.badge.available{background:var(--emerald)}
+.badge.reserved{background:var(--gold);color:#222}
+.badge.sold{background:#9DA3A3}
+.prop-body{padding:12px}
+.prop-title{font-weight:700}
+.prop-meta{color:var(--muted);font-size:14px}
+.prop-price{color:var(--gold);font-weight:800;font-size:18px}
+
+/* Filters */
+.filters{display:flex;gap:12px;flex-wrap:wrap;margin:12px 0}
+.filters label{display:flex;flex-direction:column;font-size:13px}
+.filters input,.filters select{padding:8px;border-radius:8px;border:1px solid var(--line)}
+
+/* Pagination */
+.more-btn{display:inline-block;padding:10px 14px;border-radius:12px;border:1px solid var(--line);background:#fff;cursor:pointer}
+
+/* Property detail */
+.detail-grid{display:grid;grid-template-columns:1fr 380px;gap:24px}
+@media (max-width:900px){.detail-grid{grid-template-columns:1fr}}
+.gallery{border-radius:12px;overflow:hidden}
+.gallery-main{height:420px;background:#ddd;display:flex;align-items:center;justify-content:center}
+.thumbs{display:flex;gap:8px;margin-top:8px}
+.thumbs img{width:80px;height:56px;object-fit:cover;border-radius:8px;cursor:pointer}
+.sticky-panel{position:sticky;top:80px;padding:18px;border-radius:12px;background:#fff;box-shadow:var(--shadow)}
+.contact-actions{display:flex;gap:8px;margin-top:12px}
+.btn{padding:10px 14px;border-radius:10px;background:var(--emerald);color:#fff;border:none;cursor:pointer}
+.btn.wa{background:#25D366}
+.btn.disabled{opacity:.6;pointer-events:none}
+
+/* Footer */
+footer{padding:28px 0;background:#fafafa;border-top:1px solid var(--line);margin-top:40px}
+
+/* Accessibility focus */
+a:focus,button:focus,input:focus,select:focus{outline:3px solid rgba(4,106,94,.12);outline-offset:2px}
+
+/* reduced motion */
+@media (prefers-reduced-motion:reduce){*{transition:none!important}}

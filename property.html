@@ -1,0 +1,120 @@
+<!doctype html>
+<html lang="de">
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width,initial-scale=1">
+  <title>Property – Home Creators Hurghada</title>
+  <meta name="description" content="Szczegóły oferty">
+  <link rel="stylesheet" href="styles.css">
+  <link rel="icon" href="img/logo.png">
+</head>
+<body>
+  <header class="site-header">
+    <div class="container" style="display:flex;justify-content:space-between;align-items:center">
+      <div class="site-brand"><a href="index.html"><img src="img/logo.png" alt="logo"></a></div>
+      <nav class="site-nav"><a href="index.html" data-i18n="home">Startseite</a> <a href="properties.html" data-i18n="properties">Miet/Verkauf</a></nav>
+    </div>
+  </header>
+
+  <main class="container">
+    <nav aria-label="Breadcrumbs" style="margin:12px 0">
+      <a href="index.html" data-i18n="home">Startseite</a> &raquo; <a href="properties.html" data-i18n="properties">Miet/Verkauf</a> &raquo; <span id="crumb-title"></span>
+    </nav>
+
+    <div id="not-found" style="display:none">Brak oferty. <a href="properties.html">Zurück zur Liste</a></div>
+
+    <div id="detail" class="detail-grid" style="display:none">
+      <div>
+        <div class="gallery card">
+          <div id="gallery-main" class="gallery-main"></div>
+          <div class="thumbs" id="thumbs"></div>
+        </div>
+
+        <section style="margin-top:18px">
+          <h3 id="prop-title"></h3>
+          <p id="prop-desc"></p>
+        </section>
+
+        <section style="margin-top:18px">
+          <h4>Mapa</h4>
+          <div id="map" style="height:300px;background:#eee;border-radius:12px;overflow:hidden"></div>
+        </section>
+      </div>
+
+      <aside>
+        <div class="sticky-panel">
+          <div id="prop-price" class="prop-price"></div>
+          <div id="specs" style="margin-top:12px"></div>
+          <div class="contact-actions">
+            <a id="wa-btn" class="btn wa" href="#">WhatsApp</a>
+            <a id="inquire" class="btn" href="index.html#contact">Wyślij zapytanie</a>
+          </div>
+        </div>
+      </aside>
+    </div>
+
+    <section style="margin-top:24px">
+      <h4>Podobne oferty</h4>
+      <div id="similar" class="grid" style="grid-template-columns:repeat(3,1fr);gap:12px;margin-top:12px"></div>
+    </section>
+
+  </main>
+
+  <script src="properties.js" defer></script>
+  <script src="app.js" defer></script>
+  <script defer>
+    document.addEventListener('DOMContentLoaded',()=>{
+      const params = App.parseQuery(); const id = Number(params.id);
+      const prop = window.PROPERTIES.find(p=>p.id===id);
+      if(!prop){document.getElementById('not-found').style.display='block'; return}
+      document.getElementById('detail').style.display='grid';
+      document.getElementById('crumb-title').textContent = prop.title;
+      document.getElementById('prop-title').textContent = prop.title;
+      document.getElementById('prop-desc').textContent = prop.description;
+      document.getElementById('prop-price').textContent = App.fmtEUR(prop.priceEUR,App.getLang());
+      document.getElementById('specs').innerHTML = `<div>📍 ${prop.location}</div><div>Type: ${prop.type}</div><div>🛏 ${prop.rooms}</div><div>📐 ${prop.size} m²</div><div style='margin-top:8px'>Status: <span class='badge ${prop.status}'>${prop.status}</span></div>`;
+      // gallery
+      const gm = document.getElementById('gallery-main'); gm.innerHTML = `<img src='${prop.gallery[0]}' alt='${prop.title}' style='width:100%;height:100%;object-fit:cover'>`;
+      const thumbs = document.getElementById('thumbs'); prop.gallery.forEach((g,i)=>{const im=document.createElement('img');im.src=g;im.alt=prop.title + ' ' + (i+1);im.loading='lazy';im.addEventListener('click',()=>{gm.innerHTML=`<img src='${g}' alt='${prop.title}'>`});thumbs.appendChild(im)});
+      // WA button
+      const wa = document.getElementById('wa-btn'); wa.href = `https://wa.me/${App.phoneToDigits(window.CONTACTS[0].phone)}?text=${encodeURIComponent(prop.title)}`;
+      // disable CTA if sold
+      if(prop.status==='sold'){wa.classList.add('disabled'); document.getElementById('inquire').classList.add('disabled'); wa.setAttribute('aria-disabled','true')}
+
+      // map: simple mapping of location to coords
+      const coordsMap = {
+        'El Gouna':'27.3922,33.6546','Sahl Hasheesh':'26.7698,33.9326','Hurghada':'27.2579,33.8129','Arabia':'27.267,33.8','Al Ahyaa':'27.3,33.85','Old Sheraton':'27.25,33.85','Old Kawther':'27.27,33.8','Intercontinental':'27.257,33.81','Mamsha':'27.257,33.82'
+      };
+      const map = document.getElementById('map'); const c = coordsMap[prop.location]||'27.2579,33.8129';
+      map.innerHTML = `<iframe width='100%' height='100%' frameborder='0' referrerpolicy='no-referrer-when-downgrade' src='https://www.google.com/maps?q=${encodeURIComponent(c)}&output=embed'></iframe>`;
+
+      // similar
+      const similar = window.PROPERTIES.filter(p=>p.id!==prop.id && (p.location===prop.location || p.type===prop.type)).slice(0,3);
+      const simWrap = document.getElementById('similar'); similar.forEach(p=>{const a=document.createElement('a');a.href=`property.html?id=${p.id}`;a.className='card';a.style.padding='12px';a.innerHTML=`<img src='${p.image}' alt='${p.title}' style='aspect-ratio:16/10;object-fit:cover'><div style='padding:8px'><div style='font-weight:700'>${p.title}</div><div style='color:var(--muted)'>${p.location}</div><div style='color:var(--gold)'>${App.fmtEUR(p.priceEUR,App.getLang())}</div></div>`;simWrap.appendChild(a)});
+
+      // JSON-LD breadcrumbs
+      const ld = {"@context":"https://schema.org","@type":"BreadcrumbList","itemListElement":[{"@type":"ListItem","position":1,"name":"Home","item":"index.html"},{"@type":"ListItem","position":2,"name":"Properties","item":"properties.html"},{"@type":"ListItem","position":3,"name":prop.title}]};
+      const s = document.createElement('script'); s.type='application/ld+json'; s.textContent = JSON.stringify(ld); document.head.appendChild(s);
+      // JSON-LD Offer / RealEstateListing
+      const availabilityMap = { available: 'https://schema.org/InStock', reserved: 'https://schema.org/PreOrder', sold: 'https://schema.org/SoldOut' };
+      const offerLd = {
+        "@context": "https://schema.org",
+        "@type": "Offer",
+        "priceCurrency": window.SITE_CONFIG.currency || 'EUR',
+        "price": prop.priceEUR,
+        "availability": availabilityMap[prop.status] || availabilityMap.available,
+        "itemOffered": {
+          "@type": "Residence",
+          "name": prop.title,
+          "description": prop.description,
+          "numberOfRooms": prop.rooms,
+          "floorSize": { "@type": "QuantitativeValue", "value": prop.size, "unitCode": "MTK" },
+          "address": { "@type": "Place", "name": prop.location }
+        },
+        "url": location.href
+      };
+      const s2 = document.createElement('script'); s2.type='application/ld+json'; s2.textContent = JSON.stringify(offerLd); document.head.appendChild(s2);
+    });
+  </script>
+</body>
+</html>
